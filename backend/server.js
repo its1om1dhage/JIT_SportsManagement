@@ -5,6 +5,10 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const authRoutes = require("./routes/authRoutes");
+const tokenRoutes = require("./routes/tokenRoutes");
+const userRoutes = require("./routes/userRoutes");
+
+
 
 
 // Connect Database
@@ -17,6 +21,10 @@ app.use(cors());
 app.use(helmet());
 app.use(express.json());
 app.use("/api/auth", authRoutes);
+app.use("/api/token", tokenRoutes);
+app.use("/api/user", userRoutes);
+
+
 
 
 // Test Route
