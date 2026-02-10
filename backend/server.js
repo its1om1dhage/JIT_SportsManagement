@@ -9,6 +9,8 @@ const tokenRoutes = require("./routes/tokenRoutes");
 const userRoutes = require("./routes/userRoutes");
 const gameRoutes = require("./routes/gameRoutes");
 const slotRoutes = require("./routes/slotRoutes");
+const bookingRoutes = require("./routes/bookingRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 
 
 
@@ -26,6 +28,8 @@ app.use("/api/token", tokenRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/games", gameRoutes);
 app.use("/api/slots", slotRoutes);
+app.use("/api/bookings", bookingRoutes);
+app.use("/api/admin", adminRoutes);
 
 
 
