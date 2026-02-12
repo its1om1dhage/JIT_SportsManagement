@@ -146,3 +146,83 @@ exports.loginUser = (req, res) => {
     }
   );
 };
+
+
+// GET PROFILE
+exports.getProfile = (req, res) => {
+  const userId = req.user.id;
+
+  const sql = `
+    SELECT 
+      student_id,
+      full_name,
+      college_email,
+      year,
+      section,
+      branch,
+      contact,
+      age,
+      blood_group,
+      gender,
+      address,
+      medical_info
+    FROM users
+    WHERE id = ?
+  `;
+
+  db.query(sql, [userId], (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json(results[0]);
+  });
+};
+
+
+// UPDATE PROFILE
+exports.updateProfile = (req, res) => {
+  const userId = req.user.id;
+
+  const {
+    full_name,
+    contact,
+    age,
+    blood_group,
+    gender,
+    address,
+    medical_info
+  } = req.body;
+
+  const sql = `
+    UPDATE users
+    SET
+      full_name = ?,
+      contact = ?,
+      age = ?,
+      blood_group = ?,
+      gender = ?,
+      address = ?,
+      medical_info = ?
+    WHERE id = ?
+  `;
+
+  const values = [
+    full_name,
+    contact,
+    age,
+    blood_group,
+    gender,
+    address,
+    medical_info,
+    userId
+  ];
+
+  db.query(sql, values, (err, result) => {
+    if (err) return res.status(500).json({ error: err });
+
+    res.json({ message: "Profile updated successfully" });
+  });
+};
