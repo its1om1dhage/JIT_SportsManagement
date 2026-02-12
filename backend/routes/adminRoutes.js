@@ -2,9 +2,25 @@ const express = require("express");
 const router = express.Router();
 
 const adminController = require("../controllers/adminController");
+const {
+  verifyAccessToken,
+  verifyAdmin
+} = require("../middleware/authMiddleware");
 
-// TEMP: no middleware to avoid crash
-router.get("/bookings", adminController.getAllBookings);
-router.put("/bookings/:id", adminController.updateBookingStatus);
+// Get all bookings
+router.get(
+  "/bookings",
+  verifyAccessToken,
+  verifyAdmin,
+  adminController.getAllBookings
+);
+
+// Approve or reject
+router.put(
+  "/bookings/:id",
+  verifyAccessToken,
+  verifyAdmin,
+  adminController.updateBookingStatus
+);
 
 module.exports = router;
