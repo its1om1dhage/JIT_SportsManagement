@@ -226,3 +226,29 @@ exports.updateProfile = (req, res) => {
     res.json({ message: "Profile updated successfully" });
   });
 };
+
+
+// UPDATE BOOKING STATUS
+exports.updateBookingStatus = (req, res) => {
+  const bookingId = req.params.id;
+  const { status, remark } = req.body;
+
+  if (!status) {
+    return res.status(400).json({ message: "Status required" });
+  }
+
+  const sql = `
+    UPDATE bookings
+    SET status = ?, admin_remark = ?
+    WHERE id = ?
+  `;
+
+  db.query(sql, [status, remark || null, bookingId], (err, result) => {
+    if (err) {
+      console.log("Admin update error:", err);
+      return res.status(500).json({ error: err.message });
+    }
+
+    res.json({ message: "Booking updated" });
+  });
+};

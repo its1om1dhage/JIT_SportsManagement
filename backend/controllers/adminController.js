@@ -1,39 +1,38 @@
 const db = require("../db");
 
-// GET ALL BOOKINGS (ADMIN VIEW)
+// GET ALL BOOKINGS
 exports.getAllBookings = (req, res) => {
   const sql = `
     SELECT 
-      bookings.id,
-      users.full_name,
-      users.student_id,
-      games.name AS game_name,
-      slots.day_of_week,
-      slots.start_time,
-      slots.end_time,
-      bookings.status,
-      bookings.admin_remark
-    FROM bookings
-    JOIN users ON bookings.user_id = users.id
-    JOIN slots ON bookings.slot_id = slots.id
-    JOIN games ON slots.game_id = games.id
-    ORDER BY bookings.created_at DESC
+      b.id,
+      u.full_name,
+      u.student_id,
+      g.name AS game_name,
+      s.day_of_week,
+      s.start_time,
+      s.end_time,
+      b.status,
+      b.admin_remark
+    FROM bookings b
+    JOIN users u ON b.user_id = u.id
+    JOIN slots s ON b.slot_id = s.id
+    JOIN games g ON s.game_id = g.id
+    ORDER BY b.id DESC
   `;
 
   db.query(sql, (err, results) => {
-    if (err) return res.status(500).json({ error: err });
-
+    if (err) {
+      console.log("Admin fetch error:", err);
+      return res.status(500).json({ error: err.message });
+    }
     res.json(results);
   });
 };
 
-// APPROVE OR REJECT BOOKING
+// UPDATE BOOKING STATUS
 exports.updateBookingStatus = (req, res) => {
-  const { booking_id, status, admin_remark } = req.body;
-
-  if (!booking_id || !status) {
-    return res.status(400).json({ message: "booking_id and status required" });
-  }
+  const bookingId = req.params.id;
+  const { status, remark } = req.body;
 
   const sql = `
     UPDATE bookings
@@ -41,9 +40,12 @@ exports.updateBookingStatus = (req, res) => {
     WHERE id = ?
   `;
 
-  db.query(sql, [status, admin_remark || null, booking_id], (err) => {
-    if (err) return res.status(500).json({ error: err });
+  db.query(sql, [status, remark || null, bookingId], (err) => {
+    if (err) {
+      console.log("Admin update error:", err);
+      return res.status(500).json({ error: err.message });
+    }
 
-    res.json({ message: "Booking status updated successfully" });
+    res.json({ message: "Booking updated" });
   });
 };
